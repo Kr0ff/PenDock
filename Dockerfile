@@ -69,7 +69,7 @@ RUN apt-get update && apt-get upgrade -y && apt-get dist-upgrade -y && apt-get i
  unicornscan \
  wfuzz \
  yersenia \
- zaproxy \
+ zaproxy
 
 # Create known_hosts for git cloning
 RUN mkdir -p /root/.ssh
