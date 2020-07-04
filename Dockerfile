@@ -24,7 +24,7 @@ RUN apt-get update && apt-get upgrade -y && apt-get dist-upgrade -y && apt-get i
  python \
  python3 \
  golang \
- python-impacket \
+ python3-impacket \
  python3-pip \
  python-pip \
  iputils-arping \
@@ -36,7 +36,7 @@ RUN apt-get update && apt-get upgrade -y && apt-get dist-upgrade -y && apt-get i
  crowbar \
  cupp \
 # dirbuster \
- dnsutil \
+# dnsutil \
  dnsenum \
  dnsmap \
  dnschef \
@@ -62,13 +62,13 @@ RUN apt-get update && apt-get upgrade -y && apt-get dist-upgrade -y && apt-get i
  set \
  smbmap \
  snmp \
- snort \
+# snort \
  tcpdump \
  telnet \
  tftp \
  unicornscan \
  wfuzz \
- yersenia \
+# yersenia \
  zaproxy
 
 # Create known_hosts for git cloning
