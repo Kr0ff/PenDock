@@ -10,15 +10,15 @@ RESET="\e[0m"
 
 DOCKER="`which docker` > 2>/dev/null"
 
-printf "\nThis script will install KaliLinux in docker and provide
+printf "\nThis script will install Kali linux in Docker and provide
 GUI access to it over SSH on port 2222 via X2GO...\n
 More information about the program can be found here:
 https://wiki.x2go.org/doku.php
 \n
 ${YELLOW}                 WARNING !${RESET} 
 You will be asked for your sudo password.
-That's so docker can execyte the commands 
-the script will execute.\n
+That's so Docker can execute the commands 
+the script will use.\n
 Press enter key to continue"
 read # Just wait for user input... :)
 
@@ -48,10 +48,10 @@ if [[ ( ${SSHGEN_CHOICE} = "" ) || ( ${SSHGEN_CHOICE} = "y" ) || ( ${SSHGEN_CHOI
 		`which cat` $(pwd)/Dockerfile.mod | `which sed` "s|SSH_PUBKEY|$(cat ${SSHF_NAME}.pub)|g" > Dockerfile
 	fi
 elif [[ ( ${SSHGEN_CHOICE} = "n" ) || ( ${SSHGEN_CHOICE} = 'N' ) || ( ${SSHGEN_CHOICE} = "no" ) || ( ${SSHGEN_CHOICE} = "No" ) ]]; then
-	printf "\nYou will have to generate your SSH and add
+	printf "\nYou will have to generate your SSH key and add
 it to the Dockerfile to enable SSH and GUI
 to the Kali docker container. Otherwise,
-you will have an alternative method.\n"
+you will have to use an alternative method.\n"
 else
 	printf "${RED}[-] Invalid choice !${RESET}\n"
 	exit 1
