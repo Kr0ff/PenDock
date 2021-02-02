@@ -1,25 +1,38 @@
 #!/bin/bash
 
+# Rev: 0.2 - Minor changes + new package added in choices
+
 #### COLORS ####
 RED="\e[0;91m"
 GREEN="\e[0;92m"
 BLUE="\e[0;94m"
 YELLOW='\e[0;33m'
 CYAN='\e[0;36m'
+WHITE='\e[0;97m'
 RESET="\e[0m"
 
-DOCKER="`which docker` > 2>/dev/null"
+#### ASCII ####
+ASCII="
+    ${WHITE}@@@  @@@${RESET}${BLUE} @@@  @@@  @@@@@@  @@@      @@@${RESET}
+    ${WHITE}@@!  !@@${RESET}${BLUE} @@!  !@@ @@!  @@@ @@!      @@!${RESET}
+    ${WHITE} !@@!@!${RESET}${BLUE}  @!@@!@!  @!@!@!@! @!!      !!@${RESET}
+    ${WHITE} !: :!!${RESET}${BLUE}  !!: :!!  !!:  !!! !!:      !!:${RESET}
+    ${WHITE}:::  :::${RESET}${BLUE}  :   :::  :   : : : ::.: : :  ${RESET}
+				       ${WHITE}v0.2${RESET}
+"
 
+DOCKER="`which docker` > 2>/dev/null"
+printf "${ASCII}\n"
 printf "\nThis script will install Kali linux in Docker and provide
 GUI access to it over SSH on port 2222 via X2GO...\n
 More information about the program can be found here:
 https://wiki.x2go.org/doku.php
 \n
-${YELLOW}                 WARNING !${RESET} 
-You will be asked for your sudo password.
-That's so Docker can execute the commands 
-the script will use.\n
-Press enter key to continue"
+${YELLOW}                ![WARNING]!${RESET}
+ You will be asked for your sudo password.
+ That's so Docker can execute the commands
+	   the script will use.\n
+       Press enter key to continue"
 read # Just wait for user input... :)
 
 sleep 1
@@ -50,8 +63,8 @@ if [[ ( ${SSHGEN_CHOICE} = "" ) || ( ${SSHGEN_CHOICE} = "y" ) || ( ${SSHGEN_CHOI
 elif [[ ( ${SSHGEN_CHOICE} = "n" ) || ( ${SSHGEN_CHOICE} = 'N' ) || ( ${SSHGEN_CHOICE} = "no" ) || ( ${SSHGEN_CHOICE} = "No" ) ]]; then
 	printf "\nYou will have to generate your SSH key and add
 it to the Dockerfile to enable SSH and GUI
-to the Kali docker container. Otherwise,
-you will have to use an alternative method.\n"
+to the Kali docker container. Then rerun docker build command
+manually. Otherwise, you will have to use an alternative method.\n"
 else
 	printf "${RED}[-] Invalid choice !${RESET}\n"
 	exit 1
@@ -60,9 +73,10 @@ fi
 sleep 1
 
 printf "\n${BLUE}[*] Which package of kali tools would you like to install ?${RESET}\n
-1. kali-linux-default ${CYAN}(Takes up to ~8.5GB)${RESET}
-2. kali-linux-large ${CYAN}(Takes up to ~12GB)${RESET}
-3. kali-linux-everything ${CYAN}(Takes up to ~19.5GB)${RESET} 
+1. kali-linux-core ${CYAN}(Takes up to ~2.2Gb)${RESET}
+2. kali-linux-default ${CYAN}(Takes up to ~8.5GB)${RESET}
+3. kali-linux-large ${CYAN}(Takes up to ~12GB)${RESET}
+4. kali-linux-everything ${CYAN}(Takes up to ~19.5GB)${RESET}
 \n
 Enter choice as number. i.e 1
 \n
@@ -70,12 +84,15 @@ Choice: "
 read PACKAGE_CHOICE
 
 if [[ ${PACKAGE_CHOICE} -eq 1 ]]; then
-	printf "${YELLOW}[!] Going to install 'kali-linux-default'${RESET}\n"
-	`which cat` $(pwd)/Dockerfile | `which sed` 's/META_PACKAGE/kali-linux-default/g' >> Dockerfile 
+    printf "${YELLOW}[!] Going to install just the core package of KaliLinux...${RESET}\n"
+    `which cat` $(pwd)/Dockerfile | `which sed` 's/META_PACKAGE/kali-linux-core/g' >> Dockerfile
 elif [[ ${PACKAGE_CHOICE} -eq 2 ]]; then
+	printf "${YELLOW}[!] Going to install 'kali-linux-default'${RESET}\n"
+	`which cat` $(pwd)/Dockerfile | `which sed` 's/META_PACKAGE/kali-linux-default/g' >> Dockerfile
+elif [[ ${PACKAGE_CHOICE} -eq 3 ]]; then
 	printf "${YELLOW}[!] Going to install 'kali-linux-large'${RESET}\n"
 	`which cat` $(pwd)/Dockerfile | `which sed` 's/META_PACKAGE/kali-linux-large/g' >> Dockerfile
-elif [[ ${PACKAGE_CHOICE} -eq 3 ]]; then
+elif [[ ${PACKAGE_CHOICE} -eq 4 ]]; then
 	printf "${YELLOW}[!] Going to install 'kali-linux-everything'${RESET}\n"
 	`which cat` $(pwd)/Dockerfile | `which sed` 's/META_PACKAGE/kali-linux-everything/g' >> Dockerfile
 else
@@ -90,13 +107,13 @@ if [[ ${CI_NAME} == "" ]]; then
 	printf "${RED}[-] Container image name can't be empty !${RESET}\n"
 	exit 1
 else
-	`which sudo` `which docker` build -t ${CI_NAME} $(pwd)/ # Install the kali container from the file 'Dockerfile'
+    `which sudo` `which docker` build -t ${CI_NAME} $(pwd)/ # Install the kali container from the file 'Dockerfile'
 fi
 
 sleep 1
 
 printf "\n${BLUE}[*] Do you want to start the container ?${RESET} [Y/n]: "
-read START_CHOICE 
+read START_CHOICE
 if [[ ( ${START_CHOICE} = "") || ( ${START_CHOICE} = "y" ) || ( ${START_CHOICE} = "Y" ) || ( ${START_CHOICE} = "Yes" ) || ( ${START_CHOICE} = "yes" ) ]]; then
 	printf "${BLUE}[*] What would you like to name your container ?:${RESET} "
 	read CONTAINER_NAME
@@ -106,7 +123,7 @@ if [[ ( ${START_CHOICE} = "") || ( ${START_CHOICE} = "y" ) || ( ${START_CHOICE} 
 		printf "run the script again with the same choices.\n"
 		exit 1
 	else
-		`which sudo` `which docker` run -t -d --name ${CONTAINER_NAME} -p 127.0.0.1:2222:22/tcp ${CI_NAME}
+        `which sudo` `which docker` run -t -d --name ${CONTAINER_NAME} -p 127.0.0.1:2222:22/tcp ${CI_NAME}
 		printf "${GREEN}[+] Container has been started. You can SSH on port 2222 localhost.${RESET}\n"
 		exit 0
 	fi
