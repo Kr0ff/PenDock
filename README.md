@@ -19,6 +19,7 @@ The script will use the "*Dockerfile.mod*
 
 Currently, the script will use 3 of the main metapackages that Kali has in its repository
 
+- kali-linux-core (Takes up to ~2.2GB)
 - kali-linux-default (Takes up to ~8.5GB)
 - kali-linux-large (Takes up to ~12GB)
 - kali-linux-everything (Takes up to ~19.5GB)
