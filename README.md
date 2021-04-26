@@ -57,6 +57,14 @@ After everything is filled, press OK, then click on the new entry and your sessi
 
 ![X2Go kali access example](pictures/access_kali.png)
 
+### 0x031 Important about X2Go and desktop environment !
+
+As of `v0.3`, the default desktop environment for the kali container will be LXDE. Due to high CPU usage problems with XFCE and black bars appearing around the desktop, XFCE has been replaced. 
+
+If you want to use XFCE update the `Dockerfile.mod` file and replace the line `ARG KALI_DESKTOP=lxde` with the one you would like to use. 
+
+Desktop environments are selected from the pre-built official Kali metapackages. This can be seen on line 23 of the `Dockerfile.mod` file where a desktop environment is selected to be installed. Therefore, you would need to choose a package that has the prefix of `kali-desktop-X` or just replace entirely with a package available in the repository.
+
 ## 0x04 - Tested on:
 
 - MacOS Big Sur (11.1)
