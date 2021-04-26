@@ -17,7 +17,7 @@ The script will use the "*Dockerfile.mod*
 
 - <span style="color: yellow">WARNING</span>: The script uses sudo to run docker commands due to default linux installation not including the low-privileged user in the docker group.
 
-Currently, the script will use 3 of the main metapackages that Kali has in its repository
+Currently, the script will use 4 of the main metapackages that Kali has in its repository
 
 - kali-linux-core (Takes up to ~2.2GB)
 - kali-linux-default (Takes up to ~8.5GB)
