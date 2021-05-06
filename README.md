@@ -59,7 +59,14 @@ After everything is filled, press OK, then click on the new entry and your sessi
 
 ### 0x031 Important about X2Go and desktop environment !
 
-As of `v0.3`, the default desktop environment for the kali container will be LXDE. Due to high CPU usage problems with XFCE and black bars appearing around the desktop, XFCE has been replaced. 
+As of `v0.3`, the default desktop environment for the kali container will be LXDE. Due to high CPU usage problems with XFCE. 
+Additionally black bars appearing around the desktop of XFCE sessions is another issue, however, this can be resolved by disabling the compositor.
+
+```
+# In XFCE:
+
+Settings Manager -> Window Manager Tweaks -> [Untick] Enable display compositing
+```
 
 If you want to use XFCE update the `Dockerfile.mod` file and replace the line `ARG KALI_DESKTOP=lxde` with the one you would like to use. 
 
