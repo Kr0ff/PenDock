@@ -1,0 +1,11 @@
+Match exec "echo %h | grep -o 'kali-docker'"
+	Hostname 127.0.0.1
+	Port 2222
+	User root
+	IdentityFile ~/.ssh/kali-docker
+
+Match exec "echo %h | grep -o 'blackarch-docker'"
+    Hostname 127.0.0.1
+    Port 2223
+    User root
+    IdentityFile ~/.ssh/blackarch
