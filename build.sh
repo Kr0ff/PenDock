@@ -69,7 +69,7 @@ function build_blackarch {
 		read SSHF_NAME
 
 		if [[ ${SSHF_NAME} == "" ]]; then
-			printf "${RED}[-]${RESET} SSH key name can't be empty !"
+			printf "${RED}[-]${RESET} SSH key name can't be empty !\n"
 			exit 1
 
 		else
@@ -130,14 +130,14 @@ Choice: "
 		if [[ ( ${VNC_CHOICE} = "") || ( ${VNC_CHOICE} = "y" ) || ( ${VNC_CHOICE} = "Y" ) || ( ${VNC_CHOICE} = "Yes" ) || ( ${VNC_CHOICE} = "yes" ) ]]; then
 			`which vncpasswd`
 			`which cp` ~/.vnc/passwd ${BLACKARCH_FOLDER}
-			printf "${BLUE}[+]${RESET} VNC passwd file generated !"
+			printf "${BLUE}[+]${RESET} VNC passwd file generated !\n"
 			`echo "ADD ${BLACKARCH_FOLDER}/passwd /root/.vnc/passwd" >> ${BLACKARCH_FOLDER}/Dockerfile`
 
 		elif [[ ( ${VNC_CHOICE} = "n" ) || ( ${VNC_CHOICE} = 'N' ) || ( ${VNC_CHOICE} = "no" ) || ( ${VNC_CHOICE} = "No" ) ]]; then
 			printf "${YELLOW}[!]${RESET} VNC passwd file will not be generated !\n"
 		
 		else
-			printf "${RED}[-]${RESET} Invalid choice !"
+			printf "${RED}[-]${RESET} Invalid choice !\n"
 			exit 1
 			
 		fi
@@ -230,7 +230,7 @@ function build_kali {
 		read SSHF_NAME
 
 		if [[ ${SSHF_NAME} == "" ]]; then
-			printf "${RED}[-]${RESET} SSH key name can't be empty !"
+			printf "${RED}[-]${RESET} SSH key name can't be empty !\n"
 			exit 1
 
 		else
