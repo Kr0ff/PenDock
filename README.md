@@ -4,6 +4,12 @@
 
 PenDock is a script to deploy penetration testing docker container that is either based on Blackarch or Kali Linux. Desktop access is provided as well over X2Go or VNC.
 
+[![license](https://img.shields.io/github/license/Kr0ff/PenDock)](https://opensource.org/licenses/MIT)
+[![contributions](https://img.shields.io/badge/contribution-welcome-green)](https://github.com/Kr0ff/PenDock/issues)
+![last commit](https://img.shields.io/github/last-commit/Kr0ff/PenDock?color=yellow&logo=Github)
+[![twitter](https://img.shields.io/twitter/follow/CptXrat?style=social)](https://twitter.com/CptXrat)
+[![github](https://img.shields.io/github/followers/Kr0ff?style=social)](https://github.com/Kr0ff)
+
 ## 0x01 - Update (07/05/2021):
 
 The script can now build a Blackarch or a Kali Linux container. The main difference is how desktop/GUI access is established. 
