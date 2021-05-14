@@ -53,6 +53,21 @@ fi
 
 sleep 0.5
 
+###############################################
+# Delete created [{kali,barch}.mod2] files ####
+###############################################
+function del_mod2files {
+	printf "${YELLOW}[!]${RESET} Deleting unecessary files after build..\n"
+	printf "${BLUE}[*]${RESET} Files:\n"
+	printf "----------------------------\n"
+	printf "Dockerfile.barch.mod2\n"
+	printf "Dockerfile.kali.mod2\n"
+	printf "----------------------------\n"
+
+	`which rm` ${BLACKARCH_FOLDER}/Dockerfile.barch.mod2
+	`which rm` ${KALI_FOLDER}/Dockerfile.kali.mod2
+}
+
 #########################################
 # Start building Blackarch container ####
 #########################################
@@ -75,7 +90,7 @@ function build_blackarch {
 		else
 			`which ssh-keygen` -f ${BLACKARCH_FOLDER}/${SSHF_NAME}
 			# Place the public key into "Dockerfile" for Blackarch container
-			`which cat` ${BLACKARCH_FOLDER}/Dockerfile.barch.mod | `which sed` "s|SSH_PUBKEY|$(cat ${BLACKARCH_FOLDER}/${SSHF_NAME}.pub)|g" > ${BLACKARCH_FOLDER}/Dockerfile
+			`which cat` ${BLACKARCH_FOLDER}/Dockerfile.barch.mod | `which sed` "s|SSH_PUBKEY|$(cat ${BLACKARCH_FOLDER}/${SSHF_NAME}.pub)|g" > ${BLACKARCH_FOLDER}/Dockerfile.barch.mod2
 		fi
 
 	elif [[ ( ${SSHGEN_CHOICE} = "n" ) || ( ${SSHGEN_CHOICE} = 'N' ) || ( ${SSHGEN_CHOICE} = "no" ) || ( ${SSHGEN_CHOICE} = "No" ) ]]; then
@@ -106,7 +121,7 @@ Choice: "
 
 	if [[ ${PACKAGE_CHOICE} -eq 1 ]]; then
 		printf "${YELLOW}[!]${RESET} Going to install just the core package of Blackarch...\n"
-		`which cat` ${BLACKARCH_FOLDER}/Dockerfile | `which sed` 's/META_PACKAGE//g' >> ${BLACKARCH_FOLDER}/Dockerfile
+		`which cat` ${BLACKARCH_FOLDER}/Dockerfile.barch.mod2 | `which sed` 's/META_PACKAGE//g' >> ${BLACKARCH_FOLDER}/Dockerfile
 
 	else
 		printf "${RED}[-]${RESET} Choice doesn't exist, try again.\n"
@@ -130,8 +145,9 @@ Choice: "
 		if [[ ( ${VNC_CHOICE} = "") || ( ${VNC_CHOICE} = "y" ) || ( ${VNC_CHOICE} = "Y" ) || ( ${VNC_CHOICE} = "Yes" ) || ( ${VNC_CHOICE} = "yes" ) ]]; then
 			`which vncpasswd`
 			`which cp` ~/.vnc/passwd ${BLACKARCH_FOLDER}
-			printf "${BLUE}[+]${RESET} VNC passwd file generated !\n"
-			`echo "ADD ${BLACKARCH_FOLDER}/passwd /root/.vnc/passwd" >> ${BLACKARCH_FOLDER}/Dockerfile`
+			printf "${GREEN}[+]${RESET} VNC passwd file generated !\n"
+			printf "${GREEN}[+]${RESET} VNC passwd file will be added to the Blackarch container !\n"
+			`echo "ADD 'passwd' '/root/.vnc/passwd'" >> ${BLACKARCH_FOLDER}/Dockerfile`
 
 		elif [[ ( ${VNC_CHOICE} = "n" ) || ( ${VNC_CHOICE} = 'N' ) || ( ${VNC_CHOICE} = "no" ) || ( ${VNC_CHOICE} = "No" ) ]]; then
 			printf "${YELLOW}[!]${RESET} VNC passwd file will not be generated !\n"
@@ -201,11 +217,14 @@ Choice: "
 			
 			printf "${GREEN}[+]${RESET} ${CYAN}Blackarch${RESET} container has been started. You can SSH on port 2223 localhost.\n"
 			printf "${GREEN}[+]${RESET} For VNC access, log in to the container over SSH, run 'vncpasswd' then type 'nohup startx &'"
+			del_mod2files
+			
 			exit 0
 		fi
 
 	elif [[ ( ${START_CHOICE} = "n" ) || ( ${START_CHOICE} = 'N' ) || ( ${START_CHOICE} = "no" ) || ( ${START_CHOICE} = "No" ) ]]; then
 		printf "${YELLOW}[!]${RESET} All should be good now, hopefully. Start the ${CYAN}Blackarch${RESET} container manually.\n"
+		del_mod2files
 		exit 0
 
 	else
@@ -236,7 +255,7 @@ function build_kali {
 		else
 			`which ssh-keygen` -f ${KALI_FOLDER}/${SSHF_NAME}
 			# Place the public key into "Dockerfile" for Kali Linux
-			`which cat` ${KALI_FOLDER}/Dockerfile.kali.mod | `which sed` "s|SSH_PUBKEY|$(cat ${KALI_FOLDER}/${SSHF_NAME}.pub)|g" > ${KALI_FOLDER}/Dockerfile
+			`which cat` ${KALI_FOLDER}/Dockerfile.kali.mod | `which sed` "s|SSH_PUBKEY|$(cat ${KALI_FOLDER}/${SSHF_NAME}.pub)|g" > ${KALI_FOLDER}/Dockerfile.kali.mod2
 		fi
 
 	elif [[ ( ${SSHGEN_CHOICE} = "n" ) || ( ${SSHGEN_CHOICE} = 'N' ) || ( ${SSHGEN_CHOICE} = "no" ) || ( ${SSHGEN_CHOICE} = "No" ) ]]; then
@@ -269,19 +288,19 @@ Choice: "
 
 	if [[ ${PACKAGE_CHOICE} -eq 1 ]]; then
 		printf "${YELLOW}[!]${RESET} Going to install just the core package of ${BLUE}Kali Linux${RESET}...\n"
-		`which cat` ${KALI_FOLDER}/Dockerfile | `which sed` 's/META_PACKAGE/kali-linux-core/g' >> ${KALI_FOLDER}/Dockerfile
+		`which cat` ${KALI_FOLDER}/Dockerfile.kali.mod2 | `which sed` 's/META_PACKAGE/kali-linux-core/g' >> ${KALI_FOLDER}/Dockerfile
 
 	elif [[ ${PACKAGE_CHOICE} -eq 2 ]]; then
 		printf "${YELLOW}[!]${RESET} Going to install 'kali-linux-default'\n"
-		`which cat` ${KALI_FOLDER}/Dockerfile | `which sed` 's/META_PACKAGE/kali-linux-default/g' >> ${KALI_FOLDER}/Dockerfile
+		`which cat` ${KALI_FOLDER}/Dockerfile.kali.mod2 | `which sed` 's/META_PACKAGE/kali-linux-default/g' >> ${KALI_FOLDER}/Dockerfile
 
 	elif [[ ${PACKAGE_CHOICE} -eq 3 ]]; then
 		printf "${YELLOW}[!]${RESET} Going to install 'kali-linux-large'\n"
-		`which cat` ${KALI_FOLDER}/Dockerfile | `which sed` 's/META_PACKAGE/kali-linux-large/g' >> ${KALI_FOLDER}/Dockerfile
+		`which cat` ${KALI_FOLDER}/Dockerfile.kali.mod2 | `which sed` 's/META_PACKAGE/kali-linux-large/g' >> ${KALI_FOLDER}/Dockerfile
 
 	elif [[ ${PACKAGE_CHOICE} -eq 4 ]]; then
 		printf "${YELLOW}[!]${RESET} Going to install 'kali-linux-everything'\n"
-		`which cat` ${KALI_FOLDER}/Dockerfile | `which sed` 's/META_PACKAGE/kali-linux-everything/g' >> ${KALI_FOLDER}/Dockerfile
+		`which cat` ${KALI_FOLDER}/Dockerfile.kali.mod2 | `which sed` 's/META_PACKAGE/kali-linux-everything/g' >> ${KALI_FOLDER}/Dockerfile
 
 	else
 		printf "${RED}[-]${RESET} Choice doesn't exist, try again.\n"
@@ -343,11 +362,13 @@ Choice: "
 			${CI_NAME}
 			
 			printf "${GREEN}[+]${RESET} ${BLUE}Kali Linux${RESET} container has been started. You can SSH on port 2222 localhost.\n"
+			del_mod2files
 			exit 0
 		fi
 
 	elif [[ ( ${START_CHOICE} = "n" ) || ( ${START_CHOICE} = 'N' ) || ( ${START_CHOICE} = "no" ) || ( ${START_CHOICE} = "No" ) ]]; then
 		printf "${YELLOW}[!]${RESET} All should be good now, hopefully. Start the ${BLUE}Kali Linux${RESET} container manually.\n"
+		del_mod2files
 		exit 0
 
 	else
