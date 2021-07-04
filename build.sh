@@ -1,8 +1,11 @@
 #!/bin/bash
 
+# Creator: Kr0ff
+
 # Rev: 0.2 - Minor changes + new package added in choices
 # Rev: 0.3 - Changes to desktop environment.. XFCE -> LXDE
-# Rev: 0.4 - Add support for Blackarch container deployment 
+# Rev: 0.4 - Add support for Blackarch container deployment
+# Rev: 0.5 - Added PowerShell script to support windows container deployement
 
 #### COLORS ####
 RED="\e[0;91m"
