@@ -39,6 +39,23 @@ For the Blackarch container, there is only 1 option. This is due to the sizes of
 If you would like to make it so you have only individual packages that you need, you can simply edit the "*Dockerfile.[kali/barch].mod* files.
 There are 2 bits you need to change if you're editing the script, the `SSH_PUBKEY` and `META_PACKAGE`. Simply replace with your changes and you're ready to build the image.
 
+### 0x011 Windows PowerShell Support:
+
+As of version 0.5, a PowerShell script exists to allow Windows users to deploy containers easily !
+
+To run it, open PowerShell 
+
+```powershell
+PS > .\build.ps1
+```
+
+or CMD window
+
+```cmd
+C:\ > powershell
+PS > .\build.ps1
+```
+
 ## 0x02 - How to build:
 
 ```bash
@@ -131,3 +148,4 @@ Desktop environments are selected from the pre-built official Kali metapackages.
 
 - MacOS Big Sur (11.2.3)
 - Linux
+- Windows 10 (19042)
