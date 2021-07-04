@@ -23,7 +23,7 @@ ASCII="
     ${RED}|  _  |___ ___${RESET}${PURPLE}|    \ ___ ___| |_ ${RESET}
     ${RED}|   __| -_|   ${RESET}${PURPLE}|  |  | . |  _| '_|${RESET}
     ${RED}|__|  |___|_|_${RESET}${PURPLE}|____/|___|___|_,_|${RESET}
-				 v0.4
+				 v0.5
 "
 
 DOCKER="`which docker`"
