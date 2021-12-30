@@ -10,7 +10,7 @@ PenDock is a script to deploy penetration testing docker container that is eithe
 [![twitter](https://img.shields.io/twitter/follow/CptXrat?style=social)](https://twitter.com/CptXrat)
 [![github](https://img.shields.io/github/followers/Kr0ff?style=social)](https://github.com/Kr0ff)
 
-## 0x01 - Update (07/05/2021):
+## 0x01 - Update (30/12/2021):
 
 The script can now build a Blackarch or a Kali Linux container. The main difference is how desktop/GUI access is established. 
 
@@ -38,6 +38,17 @@ For the Blackarch container, there is only 1 option. This is due to the sizes of
 
 If you would like to make it so you have only individual packages that you need, you can simply edit the "*Dockerfile.[kali/barch].mod* files.
 There are 2 bits you need to change if you're editing the script, the `SSH_PUBKEY` and `META_PACKAGE`. Simply replace with your changes and you're ready to build the image.
+
+Support added for Parrotsec linux. Please note that I do _**not**_ recommend using it at this point. I have experienced issues with creating the container due to APT not able to retrieve some dependency packages. APT would return a **404 Not Found** for random packages and this breaks the creation of the docker container. 
+
+Therefore, I have only done limited testing !
+
+This, of course, maybe per individual issue and you might not be affected. You might have to run the script multiple times or just run 
+
+```bash
+docker build -t <CONTAINER_NAME> ./parrotsec/.
+```
+and this will build your container. Bear in mind that the `Dockerfile` file will be created once the script hits the point of package selection. Alternatively, you can just create your own one.
 
 ### 0x011 Windows PowerShell Support:
 
