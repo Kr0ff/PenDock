@@ -145,7 +145,7 @@ function del_mod2files {
 	Write-Output "============================"
 	Write-Output "Dockerfile.barch.mod2"
 	Write-Output "Dockerfile.kali.mod2"
-    Write-Output "Dockerfile.parrotsec.mod2"
+    	Write-Output "Dockerfile.parrotsec.mod2"
 	Write-Output "============================"
 
     # We don't need the error msg when file isn't found 
@@ -205,7 +205,7 @@ function build_parrotsec {
         Start-Process "ssh-keygen" -ArgumentList "-f .\parrotsec\$SSH_KEY_NAME" -Wait
         $SSH_PUBKEY = Get-Content ".\parrotsec\$SSH_KEY_NAME.pub"
         
-        (Get-Content -Path ".\parrotsec\Dockerfile.kali.mod") -replace "SSH_PUBKEY","$SSH_PUBKEY" | Set-Content -Path ".\parrotsec\Dockerfile.kali.mod2"
+        (Get-Content -Path ".\parrotsec\Dockerfile.parrotsec.mod") -replace "SSH_PUBKEY","$SSH_PUBKEY" | Set-Content -Path ".\parrotsec\Dockerfile.parrotsec.mod2"
 
     } elseif ( $SSH_GEN_CHOICE -eq "N" -or $SSH_GEN_CHOICE -eq "n" -or $SSH_GEN_CHOICE -eq "no" -or $SSH_GEN_CHOICE -eq "No" ) {
         Write-Output "[!] No SSH key will be generated"
@@ -245,19 +245,19 @@ Enter choice as number. i.e 1"
     
     if ( $PACKAGE_CHOICE -eq 1 ) {
         Write-Output "[+] Installing the parrot-meta-all meta-package of Parrotsec linux"
-        (Get-Content -Path ".\parrotsec\Dockerfile.kali.mod2") -replace "META_PACKAGE","parrot-meta-all" | Set-Content -Path ".\parrotsec\Dockerfile"
+        (Get-Content -Path ".\parrotsec\Dockerfile.parrotsec.mod2") -replace "META_PACKAGE","parrot-meta-all" | Set-Content -Path ".\parrotsec\Dockerfile"
     
     } elseif ( $PACKAGE_CHOICE -eq 2 ) {
         Write-Output "[+] Installing the tools meta-package of Parrotsec linux"
-        (Get-Content -Path ".\parrotsec\Dockerfile.kali.mod2") -replace "META_PACKAGE","kali-linux-default" | Set-Content -Path ".\parrotsec\Dockerfile" 
+        (Get-Content -Path ".\parrotsec\Dockerfile.parrotsec.mod2") -replace "META_PACKAGE","parrot-tools" | Set-Content -Path ".\parrotsec\Dockerfile" 
 
     } elseif ( $PACKAGE_CHOICE -eq 3 ) {
         Write-Output "[+] Installing the mini tools meta-package of Parrotsec linux"
-        (Get-Content -Path ".\parrotsec\Dockerfile.kali.mod2") -replace "META_PACKAGE","kali-linux-large" | Set-Content -Path ".\parrotsec\Dockerfile"
+        (Get-Content -Path ".\parrotsec\Dockerfile.parrotsec.mod2") -replace "META_PACKAGE","parrot-tools-common" | Set-Content -Path ".\parrotsec\Dockerfile"
     
     } elseif ( $PACKAGE_CHOICE -eq 4 ) {
         Write-Output "[+] Installing the pico tools meta-package of Parrotsec linux"
-        (Get-Content -Path ".\parrotsec\Dockerfile.kali.mod2") -replace "META_PACKAGE","kali-linux-everything" | Set-Content -Path ".\parrotsec\Dockerfile"
+        (Get-Content -Path ".\parrotsec\Dockerfile.parrotsec.mod2") -replace "META_PACKAGE","parrot-pico" | Set-Content -Path ".\parrotsec\Dockerfile"
 
     } else {
         Write-Output "[-] Unknown choice"
