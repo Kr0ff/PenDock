@@ -9,3 +9,9 @@ Match exec "echo %h | grep -o 'blackarch-docker'"
 	Port 2223
 	User root
 	IdentityFile ~/.ssh/blackarch
+	
+Match exec "echo %h | grep -o 'parrotsec-docker'"
+	Hostname 127.0.0.1
+	Port 2224
+	User root
+	IdentityFile ~/.ssh/parrotsec-docker
