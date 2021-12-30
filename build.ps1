@@ -7,7 +7,7 @@ function Print_Ascii {
     |  _  |___ ___|    \ ___ ___| |_ 
     |   __| -_|   |  |  | . |  _| '_|
     |__|  |___|_|_|____/|___|___|_,_|
-				v0.5"
+				v0.6"
 
     Write-Output $ascii
     
@@ -142,16 +142,194 @@ function del_mod2files {
 
     Write-Output "[!] Deleting unnecessary files after build"
 	Write-Output "[*] Files:"
-	Write-Output "----------------------------"
+	Write-Output "============================"
 	Write-Output "Dockerfile.barch.mod2"
 	Write-Output "Dockerfile.kali.mod2"
-	Write-Output "----------------------------"
+    Write-Output "Dockerfile.parrotsec.mod2"
+	Write-Output "============================"
 
     # We don't need the error msg when file isn't found 
     Remove-Item ".\blackarch\Dockerfile.barch.mod2" 2>$null
     Remove-Item ".\kali\Dockerfile.kali.mod2" 2>$null
+    Remove-Item ".\parrotsec\Dockerfile.parrotsec.mod2" 2>$null
 
     Write-Host "[+] Files should be deleted"
+    Exit(0)
+}
+
+#### ATTENTION ####
+# It seems that due to the use of HTTPS in APT sources list
+# some domains are returning a 404 for certain packages which is an issue
+# so at the moment it will be only with the main tools package
+# very frustrating so i dont recommend using Parrotsec
+###################
+function build_parrotsec {
+    <#
+    .SYNOPSIS  
+    Parrotsec linux container building function
+    
+    .DESCRIPTION
+    This function will build a docker container based on Parrotsec linux and install a meta-package
+    of the user's choice.
+    Packages at the moment are as follows:
+
+    1. parrot-meta-all (Takes up to TBC)
+    2. parrot-tools (Takes up to ~6.5Gb)
+    3. parrot-tools-common (Takes up to TBC)
+    4. parrot-pico (Takes up to TBC)
+    
+    .EXAMPLE
+    EMPTY
+
+    .NOTES
+    EMPTY
+    #>
+
+    Write-Output "[+] Starting Parrotsec Linux Docker build"
+    Start-Sleep -Seconds 1
+
+    Write-Output "[!] SSH key is needed to access the container !"
+    [string]$SSH_GEN_CHOICE = Read-Host "[?] Do you want to generate an SSH key ? [Y/n]"
+    
+    if ( $SSH_GEN_CHOICE -eq '' -or $SSH_GEN_CHOICE -eq "Y" -or $SSH_GEN_CHOICE -eq "y" -or $SSH_GEN_CHOICE -eq "Yes" ) {
+        Write-Output "[+] Generating SSH key for Parrotsec linux container"
+        Start-Sleep -Seconds 1
+
+        [string]$SSH_KEY_NAME = Read-Host "[?] What should be the SSH key name"
+        
+        if ( $SSH_KEY_NAME -eq '' ) {
+            Write-Output "[-] SSH key name cannot be empty"
+            Exit(1)
+        }
+
+        Start-Process "ssh-keygen" -ArgumentList "-f .\parrotsec\$SSH_KEY_NAME" -Wait
+        $SSH_PUBKEY = Get-Content ".\parrotsec\$SSH_KEY_NAME.pub"
+        
+        (Get-Content -Path ".\parrotsec\Dockerfile.kali.mod") -replace "SSH_PUBKEY","$SSH_PUBKEY" | Set-Content -Path ".\parrotsec\Dockerfile.kali.mod2"
+
+    } elseif ( $SSH_GEN_CHOICE -eq "N" -or $SSH_GEN_CHOICE -eq "n" -or $SSH_GEN_CHOICE -eq "no" -or $SSH_GEN_CHOICE -eq "No" ) {
+        Write-Output "[!] No SSH key will be generated"
+        
+        Write-Output "
+[!] NOTE:
+
+You will have to generate your SSH key and 
+add it to the Parrotsec linux Dockerfile to enable SSH and GUI
+to the Parrotsec docker container. Then re-run docker build command
+manually. Otherwise, you will have to use an alternative method.
+
+Press any key to continue
+"
+        Pause
+        
+
+    } else {
+        Write-Output "[-] Unknown choice"
+        Exit(0)
+
+    }
+
+    Start-Sleep -Seconds 1
+
+    Write-Output "
+[*] Which meta-package of Kali linux would you like to install ?
+
+1. parrot-meta-all (Takes up to TBC)
+2. parrot-tools (Takes up to ~6.5Gb)
+3. parrot-tools-common (Takes up to TBC)
+4. parrot-pico (Takes up to TBC)
+
+Enter choice as number. i.e 1"
+
+    [int]$PACKAGE_CHOICE = Read-Host "Choice"
+    
+    if ( $PACKAGE_CHOICE -eq 1 ) {
+        Write-Output "[+] Installing the parrot-meta-all meta-package of Parrotsec linux"
+        (Get-Content -Path ".\parrotsec\Dockerfile.kali.mod2") -replace "META_PACKAGE","parrot-meta-all" | Set-Content -Path ".\parrotsec\Dockerfile"
+    
+    } elseif ( $PACKAGE_CHOICE -eq 2 ) {
+        Write-Output "[+] Installing the tools meta-package of Parrotsec linux"
+        (Get-Content -Path ".\parrotsec\Dockerfile.kali.mod2") -replace "META_PACKAGE","kali-linux-default" | Set-Content -Path ".\parrotsec\Dockerfile" 
+
+    } elseif ( $PACKAGE_CHOICE -eq 3 ) {
+        Write-Output "[+] Installing the mini tools meta-package of Parrotsec linux"
+        (Get-Content -Path ".\parrotsec\Dockerfile.kali.mod2") -replace "META_PACKAGE","kali-linux-large" | Set-Content -Path ".\parrotsec\Dockerfile"
+    
+    } elseif ( $PACKAGE_CHOICE -eq 4 ) {
+        Write-Output "[+] Installing the pico tools meta-package of Parrotsec linux"
+        (Get-Content -Path ".\parrotsec\Dockerfile.kali.mod2") -replace "META_PACKAGE","kali-linux-everything" | Set-Content -Path ".\parrotsec\Dockerfile"
+
+    } else {
+        Write-Output "[-] Unknown choice"
+        Exit(0)
+    }
+
+    [string]$CI_NAME = Read-Host "[?] What should be the name of the docker image"
+
+    if ( $CI_NAME -eq "" ) {
+        Write-Output "[!] Container image name cannot be empty"
+        Exit(0)
+
+    } else {
+        # Start-Process doesn't seem to work properly...
+        # TODO: Test powershell native options
+        cmd /c docker build -t $CI_NAME .\parrotsec\.
+    }
+
+    Start-Sleep -Seconds 0.5
+
+    [string]$STARTC_CHOICE = Read-Host "[?] Do you want to start the container [Y/n]"
+
+    if ( $STARTC_CHOICE -eq "" -or $STARTC_CHOICE -eq "Y" -or $STARTC_CHOICE -eq "y" -or $STARTC_CHOICE -eq "Yes" ) {
+        [string]$SHARED_DIRS_CHOICE = Read-Host "[?] Do you want to share directories [y/N]"
+
+        if ( $SHARED_DIRS_CHOICE -eq "Y" -or $SHARED_DIRS_CHOICE -eq "Y" -or $SHARED_DIRS_CHOICE -eq "Yes" ) {
+            Write-Output "[?] What directories to share with the container"
+
+            # User should get a notification from windows about the shared directory
+            # Has to be a full path including - C:/
+            Write-Output "Example: C:/Users/superuser/Desktop/secretfolder:/secretfolder"
+            [string]$SHARED_DIRS = Read-Host "Choice"
+        
+        } elseif ( $SHARED_DIRS_CHOICE -eq "" -or $SHARED_DIRS_CHOICE -eq "n" -or $SHARED_DIRS_CHOICE -eq "N" -or $SHARED_DIRS_CHOICE -eq "no" -or $SHARED_DIRS_CHOICE -eq "No" ) {
+            Write-Output "[!] Container will have no shared directories"
+        
+        } else {
+            Write-Output "[-] Unknown choice"
+            Exit(0)
+        }
+
+        [string]$CONTAINER_NAME = Read-Host "[?] What should be the container name"
+
+        if ( $CONTAINER_NAME -eq "" ) {
+            Write-Output "[-] Container name can't be empty !"
+            Write-Output "You will have to start the container manually or"
+            Write-Output "run the script again with the same choices."
+            Exit(0)
+
+        } else {
+            if ( $SHARED_DIRS ){
+                Start-Process "docker" -ArgumentList "run -t -v $SHARED_DIRS -d --name $CONTAINER_NAME -p 127.0.0.1:2224:22/tcp $CI_NAME" -Wait
+            } else {
+                Start-Process "docker" -ArgumentList "run -t -d --name $CONTAINER_NAME -p 127.0.0.1:2224:22/tcp $CI_NAME" -Wait
+            }
+
+            Write-Output "[+] Parrotsec linux container has been started. You can SSH on port 2222 localhost."
+			
+            del_mod2files
+			
+			Exit(0)
+        }
+    
+    } elseif ( $STARTC_CHOICE -eq "n" -or $STARTC_CHOICE -eq "N" -or $STARTC_CHOICE -eq "no" -or $STARTC_CHOICE -eq "No" ) {
+        Write-Output "[+] Parrotsec linux container should be ready now"
+        del_mod2files
+        Exit(0)
+
+    } else {
+        Write-Output "[-] Unknown choice"
+        Exit(0)
+    }
 }
 
 function build_blackarch {
@@ -454,7 +632,6 @@ Enter choice as number. i.e 1"
             }
 
             Write-Output "[+] Kali linux container has been started. You can SSH on port 2222 localhost."
-			Write-Output "[+] For VNC access, log in to the container over SSH, run 'vncpasswd' then type 'nohup startx &'"
 			
             del_mod2files
 			
@@ -502,6 +679,9 @@ function main {
 
     } elseif ( $DISTRO_CHOICE -eq 2 ) {
         build_blackarch
+
+    } elseif ( $DISTRO_CHOICE -eq 3 ) {
+        build_parrotsec
 
     } else {
         Write-Output "[-] Unknown choice"
