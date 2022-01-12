@@ -43,11 +43,12 @@ There are 2 bits you need to change if you're editing the script, the `SSH_PUBKE
 
 Therefore, I have only done limited testing !
 
-This, of course, maybe per individual issue and you might not be affected. You might have to run the script multiple times or just run 
+This, of course, may be per individual issue and you might not be affected. You might have to run the script multiple times or just run 
 
 ```bash
 docker build -t <CONTAINER_NAME> ./parrotsec/.
 ```
+
 and this will build your container. Bear in mind that the `Dockerfile` file will be created once the script hits the point of package selection. Alternatively, you can just create your own one.
 
 ### 0x011 Windows PowerShell Support:
