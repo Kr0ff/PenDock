@@ -39,7 +39,7 @@ For the Blackarch container, there is only 1 option. This is due to the sizes of
 If you would like to make it so you have only individual packages that you need, you can simply edit the "*Dockerfile.[kali/barch].mod* files.
 There are 2 bits you need to change if you're editing the script, the `SSH_PUBKEY` and `META_PACKAGE`. Simply replace with your changes and you're ready to build the image.
 
-Support added for Parrotsec linux. Please note that I do _**not**_ recommend using it at this point. I have experienced issues with creating the container due to APT not able to retrieve some dependency packages. APT would return a **404 Not Found** for random packages and this breaks the creation of the docker container. 
+*NEW* Support added for Parrotsec linux. Please note that I do _**not**_ recommend using it at this point. I have experienced issues with creating the container due to APT not able to retrieve some dependency packages. APT would return a **404 Not Found** for random packages and this breaks the creation of the docker container. 
 
 Therefore, I have only done limited testing !
 
